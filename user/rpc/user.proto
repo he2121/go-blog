@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package user;
+
+message SendEmailCodeReq {
+  string Email = 1; // 注册邮箱
+}
+message SendEmailCodeResp {
+}
+
+message AuthByEmailCodeReq {
+  string Email = 1; // 邮箱
+  string Code = 2;  // 验证码
+}
+message AuthByEmailCodeResp {
+  string AccessToken = 1; // jwt—token
+}
+
+message AuthByIDPasswordReq {
+  int64 ID = 1;  // 用户ID
+  string Password = 2; // 用户密码
+}
+message AuthByIDPasswordResp {
+  string AccessToken = 1; // jwt—token
+}
+
+message User {
+  int64  ID = 1;    // 学生ID
+  string Email = 2; // 邮箱
+  string Phone = 3; // 手机号
+  string Name = 4;  // 用户名
+  int32 Status = 5; // 用户状态 1：正常 2：停用
+  int32 Gender = 6; // 性别
+  int64 BirthDate = 7; // 出生日期，单位秒
+  int64 CreatedAt = 8; // 注册日期
+  int64 UpdatedAt = 9; // 修改日期
+  UserExtra Extra = 10; // 用户的一些额外数据
+}
+message UserExtra {
+  string AvatarUrl = 1; // 头像 URL
+}
+
+message MGetUserInfoReq {
+  repeated int64 IDs = 1;
+}
+message MGetUserInfoResp {
+  repeated int64 IDs = 1;
+  map<int64, User> Users = 2;
+}
+
+message UpdateUserInfoReq {
+  int64 ID = 1;
+  string Phone = 2; // 手机号
+  string Name = 3;  // 用户名
+  int32 Gender = 4; // 性别
+  int64 BirthDate = 5;  // 出生日期秒
+  UserExtra UserExtra = 6; // 用户额外数据
+  string PassWord = 7; // 更新密码
+}
+message UpdateUserInfoResp {
+}
+
+
+service UserService {
+  // 邮箱登陆认证发送验证吗
+  rpc SendEmailCode(SendEmailCodeReq) returns (SendEmailCodeResp);
+
+  // 邮箱登陆认证 (没有注册过默认会注册一个账号)
+  rpc AuthByEmailCode(AuthByEmailCodeReq) returns (AuthByEmailCodeResp);
+  // ID + 密码认证
+  rpc AuthByIDPassword(AuthByIDPasswordReq) returns (AuthByIDPasswordResp);
+  // 批量获取指定用户ID 的基本信息
+  rpc MGetUserInfo(MGetUserInfoReq) returns (MGetUserInfoResp);
+  // 修改指定用户ID 的基本信息
+  rpc UpdateUserInfo(UpdateUserInfoReq) returns (UpdateUserInfoResp);
+}
