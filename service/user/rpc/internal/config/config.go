@@ -11,7 +11,7 @@ type Config struct {
 		DataSource string
 	}
 	CacheRedis cache.ClusterConf
-
+	// jwt-token 的签名密钥与失效时间
 	LoginAuth struct {
 		AccessSecret string
 		AccessExpire int64

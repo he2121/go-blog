@@ -3,11 +3,11 @@ package logic
 import (
 	"context"
 
-	"github.com/he2121/go-blog/user/rpc/internal/pack"
-	"github.com/he2121/go-blog/user/rpc/internal/svc"
-	"github.com/he2121/go-blog/user/rpc/user"
-
 	"github.com/tal-tech/go-zero/core/logx"
+
+	"user/internal/pack"
+	"user/internal/svc"
+	"user/user"
 )
 
 type MGetUserInfoLogic struct {

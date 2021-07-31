@@ -2,16 +2,14 @@ package logic
 
 import (
 	"context"
-	"time"
-
 	"github.com/jinzhu/copier"
+	"github.com/tal-tech/go-zero/core/logx"
 	"github.com/tidwall/sjson"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 
-	"github.com/he2121/go-blog/user/rpc/internal/svc"
-	"github.com/he2121/go-blog/user/rpc/user"
-
-	"github.com/tal-tech/go-zero/core/logx"
+	"user/internal/svc"
+	"user/user"
 )
 
 type UpdateUserInfoLogic struct {

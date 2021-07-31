@@ -5,8 +5,8 @@ import (
 	"github.com/tal-tech/go-zero/core/logx"
 	"github.com/tidwall/gjson"
 
-	"github.com/he2121/go-blog/user/rpc/model"
-	"github.com/he2121/go-blog/user/rpc/user"
+	"user/model"
+	"user/user"
 )
 
 func MakeUserDtos(pos []*model.User) (ids []int64, dtos map[int64]*user.User) {

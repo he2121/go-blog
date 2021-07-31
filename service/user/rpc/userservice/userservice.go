@@ -8,9 +8,9 @@ package userservice
 import (
 	"context"
 
-	"github.com/he2121/go-blog/user/rpc/user"
-
 	"github.com/tal-tech/go-zero/zrpc"
+
+	"user/user"
 )
 
 type (

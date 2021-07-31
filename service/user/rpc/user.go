@@ -4,14 +4,14 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/he2121/go-blog/user/rpc/internal/config"
-	"github.com/he2121/go-blog/user/rpc/internal/server"
-	"github.com/he2121/go-blog/user/rpc/internal/svc"
-	"github.com/he2121/go-blog/user/rpc/user"
-
 	"github.com/tal-tech/go-zero/core/conf"
 	"github.com/tal-tech/go-zero/zrpc"
 	"google.golang.org/grpc"
+
+	"user/internal/config"
+	"user/internal/server"
+	"user/internal/svc"
+	"user/user"
 )
 
 var configFile = flag.String("f", "etc/user.yaml", "the config file")

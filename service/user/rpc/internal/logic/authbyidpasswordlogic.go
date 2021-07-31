@@ -6,11 +6,11 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/he2121/go-blog/user/rpc/internal/helper"
-	"github.com/he2121/go-blog/user/rpc/internal/svc"
-	"github.com/he2121/go-blog/user/rpc/user"
-
 	"github.com/tal-tech/go-zero/core/logx"
+
+	"user/internal/helper"
+	"user/internal/svc"
+	"user/user"
 )
 
 type AuthByIDPasswordLogic struct {
