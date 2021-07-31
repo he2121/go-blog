@@ -7,10 +7,10 @@ import (
 
 	"github.com/tal-tech/go-zero/core/logx"
 
-	"user/internal/helper"
-	"user/internal/svc"
-	"user/model"
-	"user/user"
+	"github.com/he2121/go-blog/service/user/rpc/internal/helper"
+	"github.com/he2121/go-blog/service/user/rpc/internal/svc"
+	"github.com/he2121/go-blog/service/user/rpc/model"
+	"github.com/he2121/go-blog/service/user/rpc/user"
 )
 
 type AuthByEmailCodeLogic struct {

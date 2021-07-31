@@ -1,4 +1,4 @@
-module user
+module github.com/he2121/go-blog/service/user/rpc
 
 go 1.16
 

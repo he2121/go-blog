@@ -8,8 +8,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"time"
 
-	"user/internal/svc"
-	"user/user"
+	"github.com/he2121/go-blog/service/user/rpc/internal/svc"
+	"github.com/he2121/go-blog/service/user/rpc/user"
 )
 
 type UpdateUserInfoLogic struct {

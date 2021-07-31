@@ -5,9 +5,9 @@ import (
 
 	"github.com/tal-tech/go-zero/core/logx"
 
-	"user/internal/pack"
-	"user/internal/svc"
-	"user/user"
+	"github.com/he2121/go-blog/service/user/rpc/internal/pack"
+	"github.com/he2121/go-blog/service/user/rpc/internal/svc"
+	"github.com/he2121/go-blog/service/user/rpc/user"
 )
 
 type MGetUserInfoLogic struct {

@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"user/internal/logic"
-	"user/internal/svc"
-	"user/user"
+	"github.com/he2121/go-blog/service/user/rpc/internal/logic"
+	"github.com/he2121/go-blog/service/user/rpc/internal/svc"
+	"github.com/he2121/go-blog/service/user/rpc/user"
 )
 
 type UserServiceServer struct {

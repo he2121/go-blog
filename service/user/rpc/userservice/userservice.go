@@ -10,7 +10,7 @@ import (
 
 	"github.com/tal-tech/go-zero/zrpc"
 
-	"user/user"
+	"github.com/he2121/go-blog/service/user/rpc/user"
 )
 
 type (

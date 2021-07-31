@@ -4,8 +4,8 @@ import (
 	"github.com/tal-tech/go-zero/core/stores/redis"
 	"github.com/tal-tech/go-zero/core/stores/sqlx"
 
-	"user/internal/config"
-	"user/model"
+	"github.com/he2121/go-blog/service/user/rpc/internal/config"
+	"github.com/he2121/go-blog/service/user/rpc/model"
 )
 
 type ServiceContext struct {

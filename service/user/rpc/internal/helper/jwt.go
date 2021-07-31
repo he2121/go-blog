@@ -5,7 +5,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 
-	"user/internal/svc"
+	"github.com/he2121/go-blog/service/user/rpc/internal/svc"
 )
 
 func GetJwtToken(ctx *svc.ServiceContext, userID int64) (string, error) {

@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tal-tech/go-zero/core/conf"
 
-	"user/internal/config"
-	"user/internal/server"
-	"user/internal/svc"
-	"user/user"
+	"github.com/he2121/go-blog/service/user/rpc/internal/config"
+	"github.com/he2121/go-blog/service/user/rpc/internal/server"
+	"github.com/he2121/go-blog/service/user/rpc/internal/svc"
+	"github.com/he2121/go-blog/service/user/rpc/user"
 )
 
 var srv *server.UserServiceServer
