@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package user;
 
+
 message SendEmailCodeReq {
   string Email = 1; // 注册邮箱
 }

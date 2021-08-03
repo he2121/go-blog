@@ -1,15 +1,128 @@
 syntax = "proto3";
 
 package blog;
+option go_package="./blog";
 
-message StreamReq {
-  string name = 1;
+message Blog {
+  int64 ID = 1;
+  int64 UserID = 2; // 作者ID
+  string Title = 3; // 博客标题/文件夹名
+  bool IsFolder = 4;  // 是否是文件夹
+  string Content = 5; // 博客正文
+  int32 Status = 6; // 博客状态 1:所有人可见 2. 仅自己可见 3. 删除状态
+  int64 FolderID = 7; // 博客所属文件夹，0 则无类别或者说根目录
+  BlogExtra Extra = 8; // 额外的一些字段
+  int64 CreatedAt = 9; // 创建时间
+  int64 UpdatedAt = 10; // 更新时间
 }
 
-message StreamResp {
-  string greet = 1;
+message BlogExtra {
 }
 
-service StreamGreeter {
-  rpc greet(StreamReq) returns (StreamResp);
+message GetBlogListReq {
+  repeated int64 IDs = 1;
+  repeated int64 UserIDs = 2; // 作者ID
+  optional string Title = 3; // 博客标题/文件夹名
+  optional bool IsFolder = 4;  // 是否是文件夹
+  optional int32 Status = 5; // 博客状态 1:所有人可见 2. 仅自己可见 3. 删除状态
+  optional int64 FolderID = 6; // 博客所属文件夹，0 则无类别或者说根目录
+  optional int64 CreatedAtGTE = 7; // 创建时间大于等于
+
+  int32 Offset = 98;
+  int32 Limit = 99;
+  optional bool NeedCount = 100;
+}
+message GetBlogListResp {
+  repeated int64 IDs = 1;
+  map<int64, Blog> Blogs = 2;
+
+  bool HasMore = 98;
+  int32 TotalCount = 99;
+}
+
+message CreateBlogReq {
+  int64 UserID = 1; // 作者ID
+  string Title = 2; // 博客标题/文件夹名
+  bool IsFolder = 3;  // 是否是文件夹
+  string Content = 4; // 博客正文
+  int32 Status = 5;   // 博客状态 1:所有人可见 2. 仅自己可见 3. 删除状态
+  int64 FolderID = 6; // 博客所属文件夹，0 则无类别或者说根目录
+}
+message CreateBlogResp {
+}
+
+message UpdateBlogReq {
+  int64 ID = 1;
+
+  optional string Title = 2; // 博客标题/文件夹名
+  optional string Content = 3; // 博客正文
+  optional int32 Status = 4;   // 博客状态 1:所有人可见 2. 仅自己可见 3. 删除状态
+  optional int64 FolderID = 5; // 博客所属文件夹，0 则无类别或者说根目录
+  optional BlogExtra Extra = 6; // 额外的一些字段
+}
+message UpdateBlogResp {
+}
+
+message Comment {
+  int64 ID = 1;       // 评论ID
+  int32 CommentType = 2; // 评论类型：1. 对博客的评论 2. 对评论的评论 3. 对用户的评论
+  string Content = 3; // 内容
+  int64 ToID = 4;    // 此评论所归属的id,若type是博客，此id是评论的博客ID
+  int64 FromUserID = 5; // 评论发起者
+  int64 ToUserID = 6; // 评论所回应的人，若是博客则是写博客的人ID
+  CommentExtra Extra = 7; // extra
+  int64 CreatedAt = 8;    // 创建时间
+  bool HasReply = 9;     // 此评论是否有回复
+  Comment Reply = 10;     // 返回第一条回复
+  int32 Status = 11;      // 评论的状态 1: 正常，2: 修改过 3. 删除
+}
+message CommentExtra {
+}
+
+message GetCommentListReq {
+  optional int64 ToID = 1;
+  optional int32 CommentType = 2;
+  optional int64 FromUserID = 3;
+  optional int64 ToUserID = 4;
+
+  int32 Offset = 98;
+  int32 Limit = 99;
+  optional bool NeedCount = 100;
+}
+message GetCommentListResp {
+  repeated int64 IDs = 1;
+  map<int64, Comment> Comments = 2;
+
+  bool HasMore = 98;
+  int32 TotalCount = 99;
+}
+
+message UpdateCommentReq {
+  int64 ID = 1;
+  optional string Content = 2;
+  optional int32 Status = 3;
+}
+message UpdateCommentResp {
+}
+
+message CreateCommentReq {
+  int32 CommentType = 2; // 评论类型：1. 对博客的评论 2. 对评论的评论 3. 对用户的评论
+  string Content = 3; // 内容
+  int64 ToID = 4;    // 此评论所归属的id,若type是博客，此id是评论的博客ID
+  int64 FromUserID = 5; // 评论发起者
+  int64 ToUserID = 6; // 评论所回应的人，若是博客则是写博客的人ID
+}
+message CreateCommentResp {
+}
+
+service BlogService {
+  // blog 增删改查接口
+  rpc GetBlogList(GetBlogListReq) returns (GetBlogListResp);
+  rpc CreateBlog(CreateBlogReq) returns (CreateBlogResp);
+  rpc UpdateBlog(UpdateBlogReq) returns (UpdateBlogResp);
+
+  // comment 增删改查接口
+  rpc GetCommentList(GetCommentListReq) returns (GetCommentListResp);
+  rpc UpdateComment(UpdateCommentReq) returns (UpdateCommentResp);
+  rpc CreateComment(CreateCommentReq) returns (CreateCommentResp);
 }

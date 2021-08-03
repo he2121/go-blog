@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-xorm/builder v0.3.4 // indirect
 	github.com/golang/protobuf v1.5.2
 	github.com/jinzhu/copier v0.3.2
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible

@@ -3,10 +3,10 @@ package model
 import (
 	"database/sql"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
+	"github.com/go-xorm/builder"
 	"github.com/tal-tech/go-zero/core/stores/cache"
 	"github.com/tal-tech/go-zero/core/stores/sqlc"
 	"github.com/tal-tech/go-zero/core/stores/sqlx"
@@ -87,24 +87,6 @@ func (m *defaultUserModel) FindOne(id int64) (*User, error) {
 	}
 }
 
-func (m *defaultUserModel) MGetUser(ids []int64) (users []*User, err error) {
-	var args strings.Builder
-	args.WriteString("(")
-	for i, id := range ids {
-		args.WriteString(strconv.FormatInt(id, 10))
-		if i != len(ids)-1 {
-			args.WriteString(",")
-		}
-	}
-	args.WriteString(")")
-	query := fmt.Sprintf("select %s from %s where `id` in %s", userRows, m.table, args.String())
-	users = []*User{}
-	if err = m.QueryRowsNoCache(&users, query); err != nil {
-		return nil, err
-	}
-	return users, err
-}
-
 func (m *defaultUserModel) FindOneByEmail(email string) (*User, error) {
 	userEmailKey := fmt.Sprintf("%s%v", cacheUserEmailPrefix, email)
 	var resp User
@@ -148,6 +130,19 @@ func (m *defaultUserModel) Delete(id int64) error {
 		return conn.Exec(query, id)
 	}, userEmailKey, userIdKey)
 	return err
+}
+
+func (m *defaultUserModel) MGetUser(ids []int64) (users []*User, err error) {
+	in := builder.In("id", ids)
+	sqlStr, args, err := builder.Select(userRows).From(m.table).Where(in).ToSQL()
+	if err != nil {
+		return nil, err
+	}
+	users = []*User{}
+	if err = m.QueryRowsNoCache(&users, sqlStr, args); err != nil {
+		return nil, err
+	}
+	return users, err
 }
 
 func (m *defaultUserModel) formatPrimary(primary interface{}) string {

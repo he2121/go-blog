@@ -23,7 +23,3 @@ jobs:
         cd ./service/user/rpc
         go build -v ./...
 
-    - name: Test
-      run: |
-        cd ./service/user/rpc
-        go test -v ./...
