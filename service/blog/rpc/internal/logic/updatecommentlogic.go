@@ -3,10 +3,11 @@ package logic
 import (
 	"context"
 
-	"blog/blog"
-	"blog/internal/svc"
-
+	"github.com/jinzhu/copier"
 	"github.com/tal-tech/go-zero/core/logx"
+
+	"github.com/he2121/go-blog/service/blog/rpc/blog"
+	"github.com/he2121/go-blog/service/blog/rpc/internal/svc"
 )
 
 type UpdateCommentLogic struct {
@@ -24,7 +25,15 @@ func NewUpdateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 func (l *UpdateCommentLogic) UpdateComment(in *blog.UpdateCommentReq) (*blog.UpdateCommentResp, error) {
-	// todo: add your logic here and delete this line
-
+	po, err := l.svcCtx.CommentModel.FindOne(in.ID)
+	if err != nil {
+		return nil, err
+	}
+	if err := copier.CopyWithOption(po, in, copier.Option{IgnoreEmpty: true}); err != nil {
+		return nil, err
+	}
+	if err := l.svcCtx.CommentModel.Update(*po); err != nil {
+		return nil, err
+	}
 	return &blog.UpdateCommentResp{}, nil
 }

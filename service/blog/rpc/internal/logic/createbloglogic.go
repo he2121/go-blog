@@ -3,10 +3,13 @@ package logic
 import (
 	"context"
 
-	"blog/blog"
-	"blog/internal/svc"
+	"github.com/jinzhu/copier"
 
 	"github.com/tal-tech/go-zero/core/logx"
+
+	"github.com/he2121/go-blog/service/blog/rpc/blog"
+	"github.com/he2121/go-blog/service/blog/rpc/internal/svc"
+	"github.com/he2121/go-blog/service/blog/rpc/model"
 )
 
 type CreateBlogLogic struct {
@@ -24,7 +27,13 @@ func NewCreateBlogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 }
 
 func (l *CreateBlogLogic) CreateBlog(in *blog.CreateBlogReq) (*blog.CreateBlogResp, error) {
-	// todo: add your logic here and delete this line
-
+	blogInfo := &model.Blog{}
+	if err := copier.Copy(blogInfo, in); err != nil {
+		return nil, err
+	}
+	if _, err := l.svcCtx.BlogModel.Insert(*blogInfo); err != nil {
+		return nil, err
+	}
+	// to do 通知关注此博客的人
 	return &blog.CreateBlogResp{}, nil
 }

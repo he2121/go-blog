@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"blog/blog"
-	"blog/internal/logic"
-	"blog/internal/svc"
+	"github.com/he2121/go-blog/service/blog/rpc/blog"
+	"github.com/he2121/go-blog/service/blog/rpc/internal/logic"
+	"github.com/he2121/go-blog/service/blog/rpc/internal/svc"
 )
 
 type BlogServiceServer struct {

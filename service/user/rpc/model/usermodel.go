@@ -133,13 +133,13 @@ func (m *defaultUserModel) Delete(id int64) error {
 }
 
 func (m *defaultUserModel) MGetUser(ids []int64) (users []*User, err error) {
-	in := builder.In("id", ids)
-	sqlStr, args, err := builder.Select(userRows).From(m.table).Where(in).ToSQL()
+	in := builder.In("`id`", ids)
+	sqlStr, args, err := builder.MySQL().Select(userRows).From(m.table).Where(in).ToSQL()
 	if err != nil {
 		return nil, err
 	}
 	users = []*User{}
-	if err = m.QueryRowsNoCache(&users, sqlStr, args); err != nil {
+	if err = m.QueryRowsNoCache(&users, sqlStr, args...); err != nil {
 		return nil, err
 	}
 	return users, err

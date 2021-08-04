@@ -4,3 +4,5 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: blog.rpc
+Mysql:
+  DataSource: root:he2121123@tcp(127.0.0.1:3306)/goblog?charset=utf8&parseTime=true&loc=Asia%2FShanghai

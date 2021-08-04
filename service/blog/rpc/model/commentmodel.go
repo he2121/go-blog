@@ -27,6 +27,9 @@ type (
 		FindOne(id int64) (*Comment, error)
 		Update(data Comment) error
 		Delete(id int64) error
+		MGetComment(ids []int64) ([]*Comment, error)
+		GetCommentList(where WhereComment, option *sql_helper.Option) ([]*Comment, error)
+		Count(where WhereComment) (int32, error)
 	}
 
 	defaultCommentModel struct {
@@ -35,25 +38,22 @@ type (
 	}
 
 	Comment struct {
-		Content    string    `db:"content"`      // 评论的内容
-		Status     int64     `db:"status"`       // 评论状态 1:正常 2. 修改过 3. 删除
-		CreatedAt  time.Time `db:"created_at"`   // 创建时间
-		Extra      string    `db:"extra"`        // 一些额外的json数据
-		Id         int64     `db:"id"`           // id
-		Type       int64     `db:"type"`         // 评论类型：1. 对博客的评论 2. 对评论的评论 3. 对用户的评论
-		ToId       int64     `db:"to_id"`        // 此评论所归属的id,若type是博客，此id是评论的博客
-		FromUserId int64     `db:"from_user_id"` // 评论发起者
-		ToUserId   int64     `db:"to_user_id"`   // 评论所回应的人，若是博客则是写博客的人ID
+		Content     string    `db:"content"`      // 评论的内容
+		Status      int64     `db:"status"`       // 评论状态 1:正常 2. 修改过 3. 删除
+		CreatedAt   time.Time `db:"created_at"`   // 创建时间
+		Extra       string    `db:"extra"`        // 一些额外的json数据
+		ID          int64     `db:"id"`           // id
+		CommentType int64     `db:"type"`         // 评论类型：1. 对博客的评论 2. 对评论的评论 3. 对用户的评论
+		ToID        int64     `db:"to_id"`        // 此评论所归属的id,若type是博客，此id是评论的博客
+		FromUserID  int64     `db:"from_user_id"` // 评论发起者
+		ToUserID    int64     `db:"to_user_id"`   // 评论所回应的人，若是博客则是写博客的人ID
 	}
 
 	WhereComment struct {
-		IDs          []int64    `db:"id" operator:"in"`
-		UserIDs      []int64    `db:"user_id" operator:"in"`
-		Title        *string    `operator:"like"`
-		IsFolder     *bool      `db:"is_folder"`
-		Status       *int32     `db:"title"`
-		FolderID     *int64     `db:"folder_id"`
-		CreatedAtGTE *time.Time `db:"created_at" operator:">="`
+		ToID        *int64 `db:"to_id"`
+		CommentType *int32 `db:"type"`
+		FromUserID  *int64 `db:"from_user_id"`
+		ToUserID    *int64 `db:"to_user_id"`
 	}
 )
 
@@ -65,8 +65,8 @@ func NewCommentModel(conn sqlx.SqlConn) CommentModel {
 }
 
 func (m *defaultCommentModel) Insert(data Comment) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, commentRowsExpectAutoSet)
-	ret, err := m.conn.Exec(query, data.Content, data.Status, data.CreatedAt, data.Extra, data.Type, data.ToId, data.FromUserId, data.ToUserId)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, commentRowsExpectAutoSet)
+	ret, err := m.conn.Exec(query, data.Content, data.Status, data.Extra, data.CommentType, data.ToID, data.FromUserID, data.ToUserID)
 	return ret, err
 }
 
@@ -86,12 +86,12 @@ func (m *defaultCommentModel) FindOne(id int64) (*Comment, error) {
 
 func (m *defaultCommentModel) MGetComment(ids []int64) (comments []*Comment, err error) {
 	in := builder.In("id", ids)
-	sqlStr, args, err := builder.Select(commentRows).From(m.table).Where(in).ToSQL()
+	sqlStr, args, err := builder.MySQL().Select(commentRows).From(m.table).Where(in).ToSQL()
 	if err != nil {
 		return nil, err
 	}
 	comments = []*Comment{}
-	if err = m.conn.QueryRows(&comments, sqlStr, args); err != nil {
+	if err = m.conn.QueryRows(&comments, sqlStr, args...); err != nil {
 		return nil, err
 	}
 	return comments, err
@@ -102,7 +102,7 @@ func (m *defaultCommentModel) GetCommentList(where WhereComment, option *sql_hel
 	if err != nil {
 		return
 	}
-	b := builder.Select(commentRows).From(m.table).Limit(option.Offset, option.Limit)
+	b := builder.MySQL().Select(commentRows).From(m.table).Limit(option.Limit, option.Offset)
 	for _, cond := range conds {
 		b.Where(cond)
 	}
@@ -111,15 +111,32 @@ func (m *defaultCommentModel) GetCommentList(where WhereComment, option *sql_hel
 		return nil, err
 	}
 	comments = []*Comment{}
-	if err = m.conn.QueryRows(&comments, sqlStr, args); err != nil {
+	if err = m.conn.QueryRows(&comments, sqlStr, args...); err != nil {
 		return nil, err
 	}
 	return comments, err
 }
 
+func (m *defaultCommentModel) Count(where WhereComment) (int32, error) {
+	conds, err := sql_helper.WrapWhere(where)
+	b := builder.Select("count(*)").From(m.table)
+	for _, cond := range conds {
+		b.Where(cond)
+	}
+	sqlStr, args, err := b.ToSQL()
+	if err != nil {
+		return 0, err
+	}
+	var count int32
+	if err := m.conn.QueryRow(&count, sqlStr, args...); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (m *defaultCommentModel) Update(data Comment) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, commentRowsWithPlaceHolder)
-	_, err := m.conn.Exec(query, data.Content, data.Status, data.CreatedAt, data.Extra, data.Type, data.ToId, data.FromUserId, data.ToUserId, data.Id)
+	_, err := m.conn.Exec(query, data.Content, data.Status, data.Extra, data.CommentType, data.ToID, data.FromUserID, data.ToUserID, data.ID)
 	return err
 }
 

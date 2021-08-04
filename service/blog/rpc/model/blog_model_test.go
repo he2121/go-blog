@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStructToConds(t *testing.T)  {
+func TestStructToConds(t *testing.T) {
 	a := int64(1)
-	where := WhereBlog{IDs: []int64{1,2,3}, FolderID: &a}
+	where := WhereBlog{IDs: []int64{1, 2, 3}, FolderID: &a}
 	conds, err := sql_helper.WrapWhere(where)
 	assert.Nil(t, err)
 	sqlStr, args, err := builder.Select("id").From("table").Where(builder.And(conds...)).ToSQL()

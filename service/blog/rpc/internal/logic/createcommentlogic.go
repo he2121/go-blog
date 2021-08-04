@@ -3,10 +3,13 @@ package logic
 import (
 	"context"
 
-	"blog/blog"
-	"blog/internal/svc"
+	"github.com/jinzhu/copier"
 
 	"github.com/tal-tech/go-zero/core/logx"
+
+	"github.com/he2121/go-blog/service/blog/rpc/blog"
+	"github.com/he2121/go-blog/service/blog/rpc/internal/svc"
+	"github.com/he2121/go-blog/service/blog/rpc/model"
 )
 
 type CreateCommentLogic struct {
@@ -24,7 +27,14 @@ func NewCreateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 }
 
 func (l *CreateCommentLogic) CreateComment(in *blog.CreateCommentReq) (*blog.CreateCommentResp, error) {
-	// todo: add your logic here and delete this line
-
+	commentInfo := &model.Comment{}
+	if err := copier.Copy(commentInfo, in); err != nil {
+		return nil, err
+	}
+	commentInfo.Status = 1
+	if _, err := l.svcCtx.CommentModel.Insert(*commentInfo); err != nil {
+		return nil, err
+	}
+	// to do 通知相应的用户
 	return &blog.CreateCommentResp{}, nil
 }
