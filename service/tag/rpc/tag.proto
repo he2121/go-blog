@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package tag;
+option go_package = "./tag";
+
+message Tag {
+  int64 ID = 1;
+  EntityType EntityType = 2;  // 标签的所属实体: 1: blog 2: comment 3: user
+  int64  EntityID = 3;        // 标签所属实体ID
+  string Content = 4;         // 标签内容
+  int32 Count = 5;            // 标签提及次数
+  int64 CreatedAt = 6;
+  int64 UpdatedAt = 7;
+}
+
+enum EntityType {
+  EntityTypeUnKnow = 0;
+  EntityTypeBlog = 1;
+  EntityTypeComment = 2;
+  EntityTypeUser = 3;
+}
+
+message GetTagListReq {
+  repeated int64 IDs = 1;
+  repeated int64 EntityIDs = 2; // 实体ID
+  optional EntityType EntityType = 3;
+  optional string Content = 4; // 内容的全量匹配
+  optional string OrderBy = 5; // 排序字段
+
+  int32 Offset = 98;
+  int32 Limit = 99;
+  optional bool NeedCount = 100;
+}
+message GetTagListResp {
+  repeated int64 IDs = 1;
+  map<int64, Tag> Tags = 2;
+
+  bool HasMore = 98;
+  int32 TotalCount = 99;
+}
+
+message CreateTagReq {
+  EntityType EntityType = 2; // 标签的所属实体: 1: blog 2: comment 3: user
+  int64  EntityID = 3; // 标签所属实体ID
+  string Content = 4; // 标签内容
+}
+message CreateTagResp {
+}
+
+message UpdateTagReq {
+  int64 ID = 1;
+
+  optional int32 Count = 2;
+}
+message UpdateTagResp {
+}
+
+// 基本 tag： 浏览量，点赞数，点踩数，关注的人，跟随的人
+message BasicTag {
+  int64 Views = 1;        // 浏览次数
+
+  repeated int64 LikeIDs = 2; // 点赞用户 ID
+  repeated int64 HateIDs = 3; // 点踩用户 ID
+  repeated int64 FollowingIDs = 4; // 关注的人的 ID
+  repeated int64 FollowerIDs = 5; // 被 xx 关注的 ID 列表，跟 following 一个动作触发
+}
+
+message UpdateBasicTagReq {
+  int64 UserID = 1;           // 谁触发了这个事件
+  ActionType ActionType = 2;  // 动作类型
+  EntityType EntityType = 3;  // 操作对象实体类型
+  int64 EntityID = 4;         // 操作对象实体ID
+}
+message UpdateBasicTagResp {
+}
+
+enum ActionType {
+  ActionTypeUnKnow = 0;
+  ActionTypeView = 1;
+
+  ActionTypeLike = 2;     // 点赞
+  ActionTypeUnLike = 3;   // 取消点赞，反向操作
+
+  ActionTypeHate = 4;     // 厌恶
+  ActionTypeUnHate = 5;   // 取消厌恶，反向操作
+
+  ActionTypeFollowing = 6;    // 关注，
+  ActionTypeUnFollowing = 7;  // 取消关注，反向操作
+}
+
+enum BasicTagType {
+  BasicTagTypeUnKnow = 0;
+  BasicTagTypeView = 1;
+  BasicTagTypeLike = 2;         // 点赞
+  BasicTagTypeHate = 3;         // 厌恶
+  BasicTagTypeFollowing = 4;    // 关注的人，
+  BasicTagTypeFollower = 5;     // 跟随的人
+}
+
+
+message MGetBasicTagReq {
+  EntityType EntityType = 1;                // 操作对象实体类型, 必传
+  repeated int64 EntityID = 2;              // 操作对象实体ID
+  repeated ActionType ActionType = 3;       // 指定要获取的基本 tag 信息，现在 4 种
+}
+
+message MGetBasicTagResp {
+  repeated int64 EntityID = 1;              // 操作对象实体ID
+  map<int64, BasicTag> BasicTags = 2;
+}
+
+
+service TagService {
+  // 自定义TAG 增删改查接口
+  rpc GetTagList(GetTagListReq) returns (GetTagListResp);
+  rpc CreateTag(CreateTagReq) returns (CreateTagResp);
+  rpc UpdateTag(UpdateTagReq) returns (UpdateTagResp);
+
+  // 基本 tag 的修改与查询
+  rpc UpdateBasicTag(UpdateBasicTagReq) returns (UpdateBasicTagResp);
+  rpc MGetBasicTag(MGetBasicTagReq) returns (MGetBasicTagResp);
+}

@@ -7,8 +7,9 @@ import (
 )
 
 type Option struct {
-	Offset int
-	Limit  int
+	Offset  int
+	Limit   int
+	OrderBy *string
 }
 
 func WrapWhere(where interface{}) (conds []builder.Cond, err error) {
@@ -39,18 +40,16 @@ func WrapWhere(where interface{}) (conds []builder.Cond, err error) {
 		case operator == "like":
 			conds = append(conds, builder.Like{colName, value.Interface().(string)})
 		case operator == ">=":
-			conds = append(conds, builder.Gte{colName:value.Interface()})
+			conds = append(conds, builder.Gte{colName: value.Interface()})
 		case operator == ">":
-			conds = append(conds, builder.Gt{colName:value.Interface()})
+			conds = append(conds, builder.Gt{colName: value.Interface()})
 		case operator == "<=":
-			conds = append(conds, builder.Lte{colName:value.Interface()})
+			conds = append(conds, builder.Lte{colName: value.Interface()})
 		case operator == "<":
-			conds = append(conds, builder.Lte{colName:value.Interface()})
+			conds = append(conds, builder.Lte{colName: value.Interface()})
 		case operator == "null":
 			conds = append(conds, builder.IsNull{colName})
 		}
 	}
 	return conds, err
 }
-
-

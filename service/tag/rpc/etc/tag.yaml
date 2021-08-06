@@ -1,15 +1,13 @@
-Name: user.rpc
+Name: tag.rpc
 ListenOn: 127.0.0.1:8080
 Etcd:
   Hosts:
-    - 192.168.31.60:2379
-  Key: user.rpc
+    - 127.0.0.1:2379
+  Key: tag.rpc
+
 Mysql:
   DataSource: root:he2121123@tcp(127.0.0.1:3306)/goblog?charset=utf8&parseTime=true&loc=Asia%2FShanghai
 CacheRedis:
   - Host: 127.0.0.1:6379
     Pass: "123456"
     Type: node
-LoginAuth:
-  AccessSecret: go_blog_2022
-  AccessExpire: 3600
