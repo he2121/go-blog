@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-xorm/builder"
+	sql_helper "github.com/he2121/go-blog/common/sql-helper"
 	"github.com/tal-tech/go-zero/core/stores/sqlc"
 	"github.com/tal-tech/go-zero/core/stores/sqlx"
 	"github.com/tal-tech/go-zero/core/stringx"
@@ -25,6 +27,8 @@ type (
 		FindOne(id int64) (*Tag, error)
 		Update(data Tag) error
 		Delete(id int64) error
+		GetTagList(where WhereTag, option *sql_helper.Option) ([]*Tag, error)
+		Count(where WhereTag) (int32, error)
 	}
 
 	defaultTagModel struct {
@@ -87,4 +91,44 @@ func (m *defaultTagModel) Delete(id int64) error {
 	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 	_, err := m.conn.Exec(query, id)
 	return err
+}
+
+func (m *defaultTagModel) GetTagList(where WhereTag, option *sql_helper.Option) (blogs []*Tag, err error) {
+	conds, err := sql_helper.WrapWhere(where)
+	if err != nil {
+		return
+	}
+	b := builder.MySQL().Select(tagRows).From(m.table).Limit(option.Limit, option.Offset)
+	if option.OrderBy != nil {
+		b.OrderBy(*option.OrderBy)
+	}
+	for _, cond := range conds {
+		b.Where(cond)
+	}
+	sqlStr, args, err := b.ToSQL()
+	if err != nil {
+		return nil, err
+	}
+	blogs = []*Tag{}
+	if err = m.conn.QueryRows(&blogs, sqlStr, args...); err != nil {
+		return nil, err
+	}
+	return blogs, err
+}
+
+func (m *defaultTagModel) Count(where WhereTag) (int32, error) {
+	conds, err := sql_helper.WrapWhere(where)
+	b := builder.MySQL().Select("count(*)").From(m.table)
+	for _, cond := range conds {
+		b.Where(cond)
+	}
+	sqlStr, args, err := b.ToSQL()
+	if err != nil {
+		return 0, err
+	}
+	var count int32
+	if err := m.conn.QueryRow(&count, sqlStr, args...); err != nil {
+		return 0, err
+	}
+	return count, nil
 }

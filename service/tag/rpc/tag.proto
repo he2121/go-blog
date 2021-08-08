@@ -93,6 +93,7 @@ enum BasicTagType {
   BasicTagTypeView = 1;
   BasicTagTypeLike = 2;         // 点赞
   BasicTagTypeHate = 3;         // 厌恶
+
   BasicTagTypeFollowing = 4;    // 关注的人，
   BasicTagTypeFollower = 5;     // 跟随的人
 }
@@ -100,12 +101,12 @@ enum BasicTagType {
 
 message MGetBasicTagReq {
   EntityType EntityType = 1;                // 操作对象实体类型, 必传
-  repeated int64 EntityID = 2;              // 操作对象实体ID
+  repeated int64 EntityIDs = 2;              // 操作对象实体ID
   repeated ActionType ActionType = 3;       // 指定要获取的基本 tag 信息，现在 4 种
 }
 
 message MGetBasicTagResp {
-  repeated int64 EntityID = 1;              // 操作对象实体ID
+  repeated int64 EntityIDs = 1;              // 操作对象实体ID
   map<int64, BasicTag> BasicTags = 2;
 }
 

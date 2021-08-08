@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 
+	"github.com/jinzhu/copier"
+
 	"github.com/he2121/go-blog/service/tag/rpc/internal/svc"
 	"github.com/he2121/go-blog/service/tag/rpc/tag"
 
@@ -24,7 +26,15 @@ func NewUpdateTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateT
 }
 
 func (l *UpdateTagLogic) UpdateTag(in *tag.UpdateTagReq) (*tag.UpdateTagResp, error) {
-	// todo: add your logic here and delete this line
-
+	po, err := l.svcCtx.TagModel.FindOne(in.ID)
+	if err != nil {
+		return nil, err
+	}
+	if err := copier.CopyWithOption(po, in, copier.Option{IgnoreEmpty: true}); err != nil {
+		return nil, err
+	}
+	if err := l.svcCtx.TagModel.Update(*po); err != nil {
+		return nil, err
+	}
 	return &tag.UpdateTagResp{}, nil
 }

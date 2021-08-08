@@ -14,16 +14,16 @@ import (
 )
 
 type (
-	CreateTagResp      = tag.CreateTagResp
-	UpdateTagReq       = tag.UpdateTagReq
+	MGetBasicTagResp   = tag.MGetBasicTagResp
 	Tag                = tag.Tag
 	GetTagListReq      = tag.GetTagListReq
-	CreateTagReq       = tag.CreateTagReq
+	CreateTagResp      = tag.CreateTagResp
 	UpdateBasicTagReq  = tag.UpdateBasicTagReq
 	UpdateBasicTagResp = tag.UpdateBasicTagResp
 	MGetBasicTagReq    = tag.MGetBasicTagReq
-	MGetBasicTagResp   = tag.MGetBasicTagResp
 	GetTagListResp     = tag.GetTagListResp
+	CreateTagReq       = tag.CreateTagReq
+	UpdateTagReq       = tag.UpdateTagReq
 	UpdateTagResp      = tag.UpdateTagResp
 	BasicTag           = tag.BasicTag
 
