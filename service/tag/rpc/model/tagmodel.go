@@ -18,7 +18,7 @@ var (
 	tagFieldNames          = builderx.RawFieldNames(&Tag{})
 	tagRows                = strings.Join(tagFieldNames, ",")
 	tagRowsExpectAutoSet   = strings.Join(stringx.Remove(tagFieldNames, "`id`", "`created_at`", "`updated_at`"), ",")
-	tagRowsWithPlaceHolder = strings.Join(stringx.Remove(tagFieldNames, "`id`", "`created_at`", "`update_at`"), "=?,") + "=?"
+	tagRowsWithPlaceHolder = strings.Join(stringx.Remove(tagFieldNames, "`id`", "`created_at`", "`updated_at`"), "=?,") + "=?"
 )
 
 type (
