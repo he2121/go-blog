@@ -1,7 +1,7 @@
 CREATE TABLE `tag`
 (
     `id`          bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `entity_type` tinyint(4)          NOT NULL DEFAULT 0 COMMENT '标签的所属实体: 1: blog 2: comment 3: user',
+    `entity_type` tinyint(4) unsigned NOT NULL DEFAULT 0 COMMENT '标签的所属实体: 1: blog 2: comment 3: user',
     `entity_id`   bigint(11) unsigned NOT NULL DEFAULT 0 COMMENT '标签所属实体ID',
     `content`     varchar(10)                  DEFAULT NULL COMMENT '标签内容',
     `count`       int(11) unsigned    NOT NULL DEFAULT 0 COMMENT '标签认同数量',
