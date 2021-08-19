@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"github.com/he2121/go-blog/service/blog/rpc/blog"
+	"github.com/he2121/go-blog/service/blog/rpc/blogservice"
 	"github.com/tal-tech/go-zero/zrpc"
 
 	"github.com/he2121/go-blog/service/blog/api/internal/config"
@@ -9,12 +9,12 @@ import (
 
 type ServiceContext struct {
 	Config      config.Config
-	BlogRpc blog.BlogServiceClient
+	BlogRpc blogservice.BlogService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:      c,
-		BlogRpc: blog.NewBlogServiceClient(zrpc.MustNewClient(c.BlogRpc)),
+		BlogRpc: blogservice.NewBlogService(zrpc.MustNewClient(c.BlogRpc)),
 	}
 }
