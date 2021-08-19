@@ -1,0 +1,10 @@
+Name: BlogApi
+Host: 0.0.0.0
+Port: 8888
+
+BlogRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: blog.rpc
+

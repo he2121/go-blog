@@ -8,9 +8,10 @@ package blogservice
 import (
 	"context"
 
-	"blog/blog"
 
 	"github.com/tal-tech/go-zero/zrpc"
+
+	"github.com/he2121/go-blog/service/blog/rpc/blog"
 )
 
 type (
